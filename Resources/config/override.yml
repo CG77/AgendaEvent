@@ -1,0 +1,49 @@
+system:
+    cg77_front:
+        location_view:
+            full:
+                n-2_page_agenda:
+                    controller: EventAgendaBundle:Agenda:viewLocation
+                    match:
+                        Identifier\ContentType: [n_2_calendar_page]
+                        Identifier\Section: [standard]
+                event_page:
+                    template: EventAgendaBundle:Full:event_page.html.twig
+                    match:
+                        Identifier\ContentType: [event_page]
+                        Identifier\Section: [standard]
+            line_block:
+                event_page:
+                    template: EventAgendaBundle:LineBlock:event_page.html.twig
+                    match:
+                        Identifier\ContentType: [event_page]
+                        Identifier\Section: [standard]
+            line:
+                event_page:
+                    template: EventAgendaBundle:Line:event_page.html.twig
+                    match:
+                        Identifier\ContentType: [event_page]
+                        Identifier\Section: [standard]
+            line_search:
+                event_page:
+                    template: EventAgendaBundle:LineSearch:event_page.html.twig
+                    match:
+                        Identifier\ContentType: [event_page]
+                        Identifier\Section: [standard]
+            search_result:
+                event_page:
+                    template: EventAgendaBundle:SearchResult:event_page.html.twig
+                    match:
+                        Identifier\ContentType: [event_page]
+                        Identifier\Section: [standard]
+            manage_event:
+                event_page:
+                    template: EventAgendaBundle:Agenda:manage_event_line.html.twig
+                    match:
+                        Identifier\ContentType: [event_page]
+                        Identifier\Section: [standard]
+        block_view:
+            bloc_do_not_miss:
+                template: "EventAgendaBundle:eZFlow/Blocks:do_not_miss.html.twig"
+                match:
+                    Type: bloc_do_not_miss

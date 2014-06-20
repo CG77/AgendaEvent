@@ -1,0 +1,14 @@
+<article class="box newsUnit">
+    <a href="{{ path( location ) }}" title="Lire la suite de &quot;{{ ez_field_value(content, 'title') }}&quot;">
+        {% if not ez_is_field_empty(content, "main_image") %}
+        {{ ez_render_field( content, "main_image", { "parameters" : { "alias" : "right_bloc_carrousel" } } ) }}
+        {% endif %}
+
+        <h2>{{ ez_field_value(content, 'title') }}</h2>
+        <span class="btnMore">&nbsp;</span>
+    </a>
+    <p>
+        {{ ez_render_field(content, 'introduction') }}
+        <span class="of">&nbsp;</span>
+    </p>
+</article>

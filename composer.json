@@ -1,0 +1,33 @@
+{
+    "name": "event/agendabundle",
+    "description": "Bundle pour la gestion des événements",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Novactive",
+            "homepage": "http://www.novactive.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/CG77/AgendaEvent.git"
+        }
+    ],
+    "require": {
+        "ezsystems/ezpublish-kernel": "*",
+        "sensio/framework-extra-bundle": "2.3.*",
+        "novactive/novaextrabundle": "1.2",
+        "novactive/eznovaextrabundle": "*"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {"Event\\AgendaBundle": ""}
+    },
+    "target-dir": "Event/AgendaBundle",
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "v1.0"
+        }
+    }
+}

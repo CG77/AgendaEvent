@@ -1,0 +1,6 @@
+<?php /*
+
+[DataTypeSettings]
+ExtensionDirectories[]=event
+
+*/ ?>

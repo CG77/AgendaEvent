@@ -1,0 +1,44 @@
+{% set li_class = "item" %}
+{% if not ez_is_field_empty( content, "tag" ) %}
+    {% set li_class = li_class ~ " " ~ get_tag_color( ez_field_value( content, "tag").tags.0.id ) %}
+{% endif %}
+{% set relation_place = ez_field_value( content, 'event_place' ) %}
+{% if relation_place.destinationContentId !=0 and relation_place.destinationContentId is not null and not ez_is_field_empty(content,'event_place') %}
+    {% set event_place = eznova_relation_field_to_content( ez_field_value( content, 'event_place' ) ) %}
+    <li class="{{ li_class }}">
+        <input type="hidden" value="{{ currentPage }}" id="pageNumber" />
+        <input type="hidden" value="{{ parentLocationId }}" id="parentLocationId" />
+        <a href="{{ path(location) }}">
+            {{ ez_render_field( content, "main_image", { "template" : "CGFrontBundle::content_fields.html.twig" } ) }}
+            <strong class="metaNote">
+                {% if not ez_is_field_empty( content, "begin_date") %}
+                    {% set begin_date = ez_field_value( content, "begin_date" ) %}
+                    {{ ez_render_field( content, "begin_date", { "template" : "CGFrontBundle::content_fields.html.twig", "container" : true } ) }}
+                    {% if not ez_is_field_empty( content, "end_date") %}
+                        {% set end_date = ez_field_value( content, "end_date" ) %}
+                        {% if begin_date != end_date %}
+                            - {{ ez_render_field( content, "end_date", { "template" : "CGFrontBundle::content_fields.html.twig", "container" : true } ) }}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+                {% if not ez_is_field_empty( content, "tag" ) %}
+                    {% if not ez_is_field_empty( content, "begin_date") or not ez_is_field_empty( content, "end_date") %}
+                        -
+                    {% endif %}
+                    {{ ez_field_value( content, "tag") }}
+                {% endif %}
+            </strong>
+            <h3>{{ ez_field_value( content, "title" ) }}</h3>
+        </a>
+        {{ ez_render_field( content, "introduction", { "template" : "CGFrontBundle::content_fields.html.twig", "container" : true } ) }}
+
+        {% set google_maps = ez_field_value( event_place, "google_map") %}
+
+        <button type="button" class="btnGeoMarker" title="Voir sur la carte" data-toggle="modal" data-target="#mapLocationModal"
+                data-title="{{ ez_field_value( content, "title" ) }}" data-latitude="{{ google_maps.latitude }}" data-longitude="{{ google_maps.longitude }}"
+                data-color="{% if not ez_is_field_empty( content, "tag" ) %}{{ get_tag_color( ez_field_value( content, "tag").tags.0.id ) }}{% else %}lbColor{% endif %}">
+            <img src="{{ asset('bundles/cgfront/images/pic-map-marker-mask.png') }}" alt="Voir sur la carte" />
+        </button>
+    </li>
+{% endif %}
+

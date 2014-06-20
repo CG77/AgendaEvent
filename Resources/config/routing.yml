@@ -1,0 +1,5 @@
+cg77_front:
+    resource: "@EventAgendaBundle/Controller/"
+    type: annotation
+    prefix: /
+

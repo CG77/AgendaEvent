@@ -1,0 +1,13 @@
+{% set validItems = pageService.getValidBlockItems( block ) %}
+{% set validContentInfoItems = pageService.getValidBlockItemsAsContentInfo( block ) %}
+
+<div class="box textUnit">
+    <h2>&Agrave; ne pas rater</h2>
+    <div class="content">
+        <ul class="resetList diaryList">
+            {% for index,ContentInfoItem in validContentInfoItems %}
+                {{ render( controller( 'ez_content:viewLocation', { 'locationId': validItems[index].locationId, 'viewType': 'line' } ) ) }}
+            {% endfor %}
+        </ul>
+    </div>
+</div>

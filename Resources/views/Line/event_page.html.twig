@@ -1,0 +1,25 @@
+<li>
+    <a href="{{ path(location) }}">
+        {{ ez_render_field( content, "main_image", { "template" : "CGFrontBundle::content_fields.html.twig" } ) }}
+        <strong class="metaNote">
+            {% if not ez_is_field_empty( content, "begin_date") %}
+                {% set begin_date = ez_field_value( content, "begin_date" ) %}
+                {{ ez_render_field( content, "begin_date", { "template" : "CGFrontBundle::content_fields.html.twig", "container" : true } ) }}
+                {% if not ez_is_field_empty( content, "end_date") %}
+                    {% set end_date = ez_field_value( content, "end_date" ) %}
+                    {% if begin_date != end_date %}
+                        - {{ ez_render_field( content, "end_date", { "template" : "CGFrontBundle::content_fields.html.twig", "container" : true } ) }}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            {% if not ez_is_field_empty( content, "tag" ) %}
+                {% if not ez_is_field_empty( content, "begin_date") or not ez_is_field_empty( content, "end_date") %}
+                    -
+                {% endif %}
+                {{ ez_field_value( content, "tag") }}
+            {% endif %}
+        </strong>
+        <h3>{{ ez_field_value( content, "title" ) }}</h3>
+    </a>
+    {{ ez_render_field( content, "introduction", { "template" : "CGFrontBundle::content_fields.html.twig", "container" : true } ) }}
+</li>

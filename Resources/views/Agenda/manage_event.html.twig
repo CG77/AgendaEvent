@@ -1,0 +1,63 @@
+{% extends "CGFrontBundle:Layout:home.html.twig" %}
+
+{% set body_class = "bodyPage bodyDiary bodyForm" %}
+{% set body_id = "sortir" %}
+
+{% set agenda = ez_fetch_content_class( "n_2_calendar_page" ) %}
+
+{% block content %}
+    <section class="lowerSection">
+    <div id="utils">
+        <div class="wrapper">
+            {{ render(  controller('CGFrontBundle:Layout:breadcrumb',{ 'locationId': agenda.contentInfo.mainLocationId } ) ) }}
+            {% include "CGFrontBundle:Common:social_tools.html.twig" %}
+        </div>
+    </div>
+    <div class="wrapper">
+    <!-- colMedium -->
+    <section class="colMedium">
+        {% include "CGFrontBundle:Common:tooltip.html.twig" with { "content": agenda } %}
+        <article class="content">
+            <header>
+                <h1>{{ ez_field_value( agenda, "title" ) }}</h1>
+                <p class="heading">
+                    Gérez vos évènements.
+                </p>
+            </header>
+        </article>
+
+        {% if results|length > 0 %}
+        <ul class="content resetList diaryList">
+            {% for content in results %}
+                {{ render( controller( "ez_content:viewLocation", { "locationId" : content.contentInfo.mainLocationId, "viewType": "manage_event", "params" : { "showEdit" : showEdit, "showDelete" : showDelete } }  ) ) }}
+            {% endfor %}
+            </ul>
+        {% else %}
+            <div class="content">
+                <h3>Vous n'avez pas d'évènements</h3>
+            </div>
+        {% endif %}
+
+        <div class="modal fade" id="eventDeleteModal" tabindex="-1" role="dialog" aria-labelledby="eventDeleteLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modalContent">
+                    <div class="modalHeader">
+                        <p class="modalTitle" id="eventDeleteLabel"></p>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modalBody">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /colMedium -->
+
+    <!-- aside -->
+    <aside role="complementary">
+        {{ render_esi( controller( "EventAgendaBundle:Agenda:showRightBloc", { "locationId" : agenda.contentInfo.mainLocationId, "page" : "list" } ) ) }}
+    </aside>
+    <!-- /aside -->
+    </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,320 @@
+{% extends "CGFrontBundle:Layout:home.html.twig" %}
+
+{% set body_class = "bodyPage bodyDiary" %}
+
+ {% block javascripts_more %}
+     {{ parent() }}
+     {% javascripts
+     '@CGFrontBundle/Resources/public/javascripts/jquery.flexslider.js'
+     '@CGFrontBundle/Resources/public/javascripts/jquery.flexslider-min.js'
+     '@CGFrontBundle/Resources/public/javascripts/cg77_gallery.js' %}
+     <script type="text/javascript" src="{{ asset_url }}"></script>
+     {% endjavascripts %}
+ {% endblock %}
+
+
+{% block stylesheets_more %}
+    {{ parent() }}
+    {% stylesheets
+    'bundles/cgfront/stylesheets/flexslider.css'
+    'bundles/cgfront/stylesheets/cg77_gallery.css'
+    filter='cssrewrite' %}
+    <link rel="stylesheet" type="text/css" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+
+
+
+{% block content %}
+    <section class="lowerSection">
+    <div id="utils">
+        <div class="wrapper">
+            {{ render(  controller('CGFrontBundle:Layout:breadcrumb',{ 'locationId': location.id } ) ) }}
+            {% include "CGFrontBundle:Common:social_tools.html.twig" %}
+        </div>
+    </div>
+    <div class="wrapper">
+    <!-- colMedium -->
+    <section class="colMedium">
+        {% include "CGFrontBundle:Common:tooltip.html.twig" %}
+        {% set parentLocation = ez_get_location( location.parentLocationId ) %}
+        <a href="{{ path(parentLocation) }}" class="btn goBack">Liste des sorties</a>
+        <article class="content">
+            <header>
+                <h1>{{ ez_content_name( content ) }}</h1>
+                <strong class="metaNote">{{ ez_field_value( content, "tag" ) }}</strong>
+            </header>
+            <p class="heading">
+                {{ ez_field_value( content, 'introduction' )|striptags() }}
+            </p>
+
+            <div class="visualInsetLeft">
+                {% if not ez_is_field_empty(content, "main_image") %}
+                    {{ ez_render_field( content, "main_image" ) }}
+                    <p>{{ ez_field_value(content, "copyright") }}</p>
+                {% endif %}
+            </div>
+            {{ ez_render_field( content, "description" ) }}
+        </article>
+
+        <!-- Gallery Album Photos-->
+        {% if not ez_is_field_empty( content, "album" ) %}
+
+        {% set album =  ez_field_value( content, "album" ) %}
+        {% set album = eznova_relationlist_field_to_content_list( album ) %}
+
+        <div class="gallery-event">
+            <div id="slider" class="flexslider">
+                <ul class="slides">
+                    {% for contentInfo in album %}
+                        {% if not ez_is_field_empty( contentInfo, "image" ) %}
+                            <li>
+
+                                {{ ez_render_field(contentInfo,"image", { "parameters" : { "alias" : "gallery_event" }}
+                                )}}
+
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div id="carousel" class="flexslider">
+                <ul class="slides">
+                    {% for contentInfo in album %}
+                        {% if not ez_is_field_empty( contentInfo, "image" ) %}
+                            <li>
+                                <div class="container3">
+                                    <div class="container2">
+                                {{ ez_render_field(contentInfo,"image", { "parameters" : { "alias" : "thumbnail_event" }}
+                                )}}
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- /Gallery Album Photos-->
+
+        <!-- Bloc Video -->
+        {% set video_insert = ez_field_value( content, "video_insert" ) %}
+        {% if video_insert.destinationContentId != 0 %}
+            {% set video_insert = eznova_relation_field_to_content( ez_field_value( content, "video_insert" ) ) %}
+            {{ render( controller( "ez_content:viewLocation", {"locationId": video_insert.contentInfo.mainLocationId, "viewType": "line_block"}  ) ) }}
+        {% endif %}
+        <!-- /Bloc Video -->
+
+        <!-- Bloc Image -->
+        {% set image_insert = ez_field_value( content, "image_insert" ) %}
+        {% if image_insert.destinationContentId != 0 %}
+            {% set image_insert = eznova_relation_field_to_content( ez_field_value( content, "image_insert" ) ) %}
+            {{ render( controller( "ez_content:viewLocation", {"locationId": image_insert.contentInfo.mainLocationId, "viewType": "line_block"}  ) ) }}
+        {% endif %}
+        <!-- /Bloc Image -->
+    </section>
+    <!-- /colMedium -->
+
+    <!-- aside -->
+    <aside>
+        {% if not ez_is_field_empty( content, "promoter" ) %}
+            <!-- Bloc Organise Par -->
+            <div class="box textUnit">
+                <h2>Organisé par&nbsp;:</h2>
+
+                <div class="content">
+                    <ul>
+                        <li><h3>{{ ez_field_value( content, 'promoter' ) }}</h3></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /Bloc Organise Par -->
+        {% endif %}
+
+
+
+        {% if not ez_is_field_empty( content, "supported_by" ) %}
+            <!-- Bloc Soutenu Par -->
+            <div class="box textUnit rClear">
+                <h2>Soutenu par&nbsp;:</h2>
+
+                <div class="content">
+                    <img src="{{ asset('bundles/cgfront/images/logo-cg77.png') }}"
+                         alt="Conseil général de Seine-et-Marne" class="caOfficial"/>
+                </div>
+            </div>
+            <!-- /Bloc Soutenu Par -->
+        {% endif %}
+
+        <!-- Bloc Carte -->
+        <div class="box visualUnit map">
+            {% set event_place = eznova_relation_field_to_content( ez_field_value(content, "event_place" ) ) %}
+            {% set google_maps = ez_field_value( event_place, "google_map") %}
+
+            <input type="hidden" id="event_place_latitude" value="{{ google_maps.latitude }}"/>
+            <input type="hidden" id="event_place_longitude" value="{{ google_maps.longitude }}"/>
+            <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+            <div id="map-event-page" class="mapCanvasSmall"></div>
+            <h2>Où&nbsp;?</h2>
+
+            <p>
+                <strong itemprop="name">{{ ez_field_value( event_place, "name" ) }}</strong><br/>
+                <span itemprop="addressStreet">{{ ez_field_value( event_place, "address" ) }}</span>,
+                <span itemprop="addressLocality">{{ ez_field_value( event_place, "zipcode" ) }} {{ ez_field_value( event_place, "city" ) }}</span>
+            </p>
+
+            <p>
+                {% if not ez_is_field_empty( event_place, "phone" ) %}
+                    Tél&nbsp;: {{ ez_field_value( event_place, "phone" ) }}<br/>
+                {% endif %}
+                {% if not ez_is_field_empty( event_place, "email" ) %}
+                    Email&nbsp;: <a
+                        href="mailto:{{ ez_field_value( event_place, "email" ) }}">{{ ez_field_value( event_place, "email" ) }}</a>
+                    <br/>
+                {% endif %}
+                {% if not ez_is_field_empty( event_place, "website" ) %}
+                    Site&nbsp;: <a href="#dev" target="_blank"
+                                   title="(nouvelle fenêtre)">{{ ez_field_value( event_place, "website" ) }}</a>
+                {% endif %}
+            </p>
+        </div>
+        <!-- /Bloc Carte -->
+
+        <!-- Bloc Dates -->
+        <div class="box dateUnit rClear">
+            <div class="eventDate"></div>
+            <h2>Quand&nbsp;?</h2>
+            {% set minDate = ez_field_value( content, 'begin_date' ) | date("d/m/Y") %}
+            {% set maxDate = ez_field_value( content, 'end_date' ) | date("d/m/Y") %}
+
+            <input type="hidden" id="event_begin_date" value="{{ minDate }}">
+            <input type="hidden" id="event_end_date" value="{{ maxDate }}">
+            {% set schedule = ez_field_value( content, "timetable") %}
+            <input type="hidden" id="event_schedule" value="{{ schedule.text }}">
+
+            <p>Du {{ ez_field_value( content, 'begin_date' ) | localizeddate( "long", "none", app.request.locale ) }}
+                au {{ ez_field_value( content, 'end_date' ) | localizeddate( "long", "none", app.request.locale ) }}</p>
+            {% if not ez_is_field_empty( content, "duration" ) %}
+                <p>Durée : {{ ez_field_value( content, 'duration' ) | date( "h:i") }}</p>
+            {% endif %}
+            <p class="time_schedule"></p>
+        </div>
+        <!-- /Bloc Dates -->
+
+        <!-- Bloc Tarifs -->
+        <div class="box textUnit">
+            <h2>Tarifs</h2>
+            {% set is_free = ez_field_value( content, "is_free" ) %}
+            <div class="content">
+                <ul>
+                    <li>
+                        {% if is_free == "0" %}
+                            <span class="caCost">Gratuit</span>
+                        {% else %}
+                            {% if not ez_is_field_empty(content,'min_price') and not ez_is_field_empty(content,'max_price') %}
+                            <span class="caCost">De {{ ez_field_value( content, 'min_price' ) }}
+                                à {{ ez_field_value( content, 'max_price' ) }}&nbsp;&euro;</span>
+                            {% endif %}
+                            {% if not ez_is_field_empty(content,'min_price') and ez_is_field_empty(content,'max_price')  %}
+                            <span class="caCost">A partir de {{ ez_field_value( content, 'min_price' ) }}
+                                &nbsp;&euro;</span>
+                            {% endif %}
+                            {% if ez_is_field_empty(content,'min_price') and not ez_is_field_empty(content,'max_price')  %}
+                                <span class="caCost">Jusqu'à {{ ez_field_value( content, 'max_price' ) }}
+                                    &nbsp;&euro;</span>
+                            {% endif %}
+                        {% endif %}
+                        {% if not ez_is_field_empty( content, "prices_informations" ) %}
+                            {{ ez_render_field( content, "prices_informations" ) }}
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- /Bloc Tarifs -->
+
+        <!-- Bloc Accessibilite -->
+        {% if not ez_is_field_empty( event_place, "accessibility" ) %}
+            <div class="box textUnit rClear">
+                <h2>Accessibilité</h2>
+
+                <div class="content">
+                    {% set accessibility = ez_field_value( event_place, "accessibility" ) %}
+                    <ul class="caAccessibility">
+                        {% if accessibility.selection.0 is defined %}
+                            <li>
+                                <img src="{{ asset('bundles/cgfront/images/pic-handicap-visuel.png') }}"
+                                     alt="Accessible aux personnes malvoyantes"
+                                     title="Accessible aux personnes malvoyantes"/>
+                            </li>
+                        {% endif %}
+                        {% if accessibility.selection.1 is defined %}
+                            <li>
+                                <img src="{{ asset('bundles/cgfront/images/pic-handicap-moteur.png') }}"
+                                     alt="Accessible aux personnes à mobilité réduite"
+                                     title="Accessible aux personnes à mobilité réduite"/>
+                            </li>
+                        {% endif %}
+                        {% if accessibility.selection.2 is defined %}
+                            <li>
+                                <img src="{{ asset('bundles/cgfront/images/pic-handicap-auditif.png') }}"
+                                     alt="Accessible aux personnes malentendantes"
+                                     title="Accessible aux personnes malentendantes"/>
+                            </li>
+                        {% endif %}
+                        {% if accessibility.selection.3 is defined %}
+                            <li>
+                                <img src="{{ asset('bundles/cgfront/images/pic-handicap-mental.png') }}"
+                                     alt="Accessible aux personnes handicapées mentales"
+                                     title="Accessible aux personnes handicapées mentales"/>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        <!-- /Bloc Accessibilite -->
+
+        <!-- Bloc Contact -->
+        <div class="box textUnit">
+            <h2>Contact</h2>
+
+            <div class="content">
+                <ul>
+                    {% if not ez_is_field_empty( content, "promoter_website" ) %}
+                        <li>
+                            <b>Site organisateur : </b>{{ ez_field_value( content, "promoter_website" ) }}
+                        </li>
+                    {% endif %}
+                    {% if not ez_is_field_empty( content, "promoter_email" ) %}
+                        <li>
+                            <b>Email organisateur : </b>{{ ez_field_value( content, "promoter_email" ) }}
+                        </li>
+                    {% endif %}
+                    {% if not ez_is_field_empty( content, "promoter_phone" ) %}
+                        <li>
+                            <b>Tél organisateur : </b>{{ ez_field_value( content, "promoter_phone" ) }}
+                        </li>
+                    {% endif %}
+                    {% if not ez_is_field_empty( content, "booking_email" ) %}
+                        <li>
+                            <b>Email réservation : </b>{{ ez_field_value( content, "booking_email" ) }}
+                        </li>
+                    {% endif %}
+                    {% if not ez_is_field_empty( content, "booking_phone" ) %}
+                        <li>
+                            <b>Tél réservation : </b>{{ ez_field_value( content, "booking_phone" ) }}
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- /Bloc Contact -->
+    </aside>
+    <!-- /aside -->
+    </div>
+    </section>
+    </section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% set parent = eznova_parentcontent_by_contentinfo( content.contentInfo ) %}
+{% set first_parent = eznova_parentcontent_by_contentinfo( parent.contentInfo ) %}
+
+{% set place = eznova_relation_field_to_content( ez_field_value( content, 'event_place' ) ) %}
+
+{% set li_class = "item" %}
+{% if not ez_is_field_empty( first_parent, "tag" ) %}
+    {% set li_class = li_class ~ " " ~ get_tag_color( ez_field_value( first_parent,'tag' ).tags[0].id ) %}
+{% endif %}
+
+<li class="{{ li_class }}">
+    <strong class="metaNote">
+        {% if not ez_is_field_empty( content, "begin_date") %}
+            {{ ez_render_field( content, "begin_date", { "template" : "CGFrontBundle::content_fields.html.twig", "container" : true } ) }} -
+        {% endif %}
+        {% if not ez_is_field_empty( content, "end_date") %}
+            {{ ez_render_field( content, "end_date", { "template" : "CGFrontBundle::content_fields.html.twig", "container" : true } ) }} -
+        {% endif %}
+        {% if not ez_is_field_empty( first_parent, "tag" ) %}
+            <span>{{ ez_field_value( first_parent, "tag" ) }}</span>
+        {% endif %}
+    </strong>
+    <h3>
+        <a href="{{ path(location) }}">
+            {{ ez_field_value( content, "title" ) }}
+        </a>
+    </h3>
+    {{ ez_render_field( content, "introduction" ) }}
+    <strong>Lieu&nbsp;:</strong> {{ ez_content_name( place, 'name' ) }}
+
+    <p class="itemUrl">
+        {{ render(  controller( 'CGFrontBundle:Layout:pathContent' , { 'locationId' : location.id } ) ) }}
+    </p>
+
+</li>

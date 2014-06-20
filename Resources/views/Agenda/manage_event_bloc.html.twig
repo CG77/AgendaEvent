@@ -1,0 +1,25 @@
+<!-- Bloc Texte -->
+<div class="box textUnit">
+    <h2>Votre agenda</h2>
+    <div class="content">
+        {% if showAdd %}
+            <form method="post" action="/event/action">
+                <div class="add-news">
+                    <button class="btnPic btnPicAdd" type="submit" name="NewButton" value="Ajouter un évènement">Ajouter un évènement</button>
+                    <input type="hidden" name="ClassIdentifier" value="event_page"/>
+                    <input type="hidden" name="NodeID" value="{{ locationId }}"/>
+                    <input type="hidden" name="ezxform_token" value="{{ csrf_token('legacy') }}">
+                </div>
+            </form>
+        {% endif %}
+        <ul>
+            {% if showList %}
+                <li><a href="/event/list">Gérer vos évènements</a></li>
+            {% endif %}
+            {% if showAgenda %}
+                <li><a href="{{ path( location ) }}">Retour à l'agenda</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+<!-- /Bloc Texte -->

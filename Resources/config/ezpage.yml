@@ -1,0 +1,12 @@
+system:
+    cg77_front:
+        ezpage:
+            layouts:
+                AgendaZoneLayout:
+                    name: "Gabarit Page Home Agenda"
+                    template: "EventAgendaBundle:eZFlow/Zones:agendaZoneLayout.html.twig"
+            enabledLayouts: [AgendaZoneLayout]
+
+            blocks:
+                bloc_do_not_miss:
+                    name: "Bloc A ne pas rater"
