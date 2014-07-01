@@ -7,6 +7,7 @@ $( function() {
     manage_event_schedule.init();
     if ($("#map-canvas" ).length > 0 ) { manage_home_agenda.init(); }
     manage_myevents.init();
+    verif_form_event.init();
     if($('.eventpage_date').length > 0 ){
         var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
         if(is_chrome){
@@ -93,7 +94,7 @@ var manage_event_place = function() {
                     $('.ajax-loader').hide();
                 },
                 error: function() {
-                    console.log( "error" );
+                    //console.log( "error" );
                 }
             } );
         } );
@@ -140,7 +141,7 @@ var manage_event_place = function() {
                         $('.ajax-loader').hide();
                     },
                     error: function() {
-                        console.log( "error" );
+                        //console.log( "error" );
                     }
                 } );
             } else {
@@ -251,7 +252,6 @@ var city_autocomplete = function() {
                                 var result = "";
                                 if ( data ) {
                                     result = $.map( data, function( item ) {
-                                        console.log(item);
                                         return {
                                             label: item.name,
                                             value: item.name,
@@ -260,7 +260,7 @@ var city_autocomplete = function() {
                                         };
                                     } );
                                 } else {
-                                    console.log("else");
+                                    //console.log("else");
                                     result = ["Pas de résultat"];
                                 }
                                 response( result );
@@ -279,7 +279,7 @@ var city_autocomplete = function() {
                     $.each( items, function( index, item ) {
                         if ( item.category != category ) {
                             category = item.category;
-                            ul.append( "<li class='ui-autocomplete-group'>" + category + "</li>" );
+                            ul.append( "<li class='ui-autocomplete-category'>" + category + "</li>" );
                         }
                         self._renderItemData( ul, item );
                     } );
@@ -297,13 +297,23 @@ var city_autocomplete = function() {
                             dataType: "json",
                             url: "/place/cities/" + nodeid + "/" + city_name + "/city",
                             success: function( data ) {
-                                response( $.map( data, function( item ) {
-                                    return {
-                                        label: item.city + " (" + item.zipcode + ")",
-                                        value: item.city,
-                                        id: item.city
-                                    };
-                                } ) );
+                                var result = "";
+                                if ( data ) {
+                                    result = $.map( data, function( item ) {
+                                        var label = item.name;
+                                        var zipcode = item.zipcode != "" ? " (" + item.zipcode + ")" : "";
+                                        return {
+                                            label: label+zipcode,
+                                            value: item.name,
+                                            id: item.name
+                                        };
+                                    } );
+                                } else {
+                                    //console.log("else");
+                                    result = ["Pas de résultat"];
+                                }
+                                response( result );
+
                             },
                             error: function() {
                             }
@@ -390,7 +400,7 @@ var manage_event_album = function(){
                     $('.ajax-loader').hide();
                 },
                 error: function() {
-                    console.log( "error" );
+                    //console.log( "error" );
                 }
             } );
         })
@@ -434,7 +444,6 @@ var manage_event_album = function(){
     }
     //Delete image
     $(document).on('click','.deleteAction',function(){
-        //$("#dialog-confirm").html("Etes vous sûr de supprimer cet image ?");
         var objectID = $(this).parent().parent().attr('id');
         var ezformtoken = $( 'input[name="ezxform_token"]' ).val();
         if(confirm("Etes vous sûr de supprimer cet image ?")){
@@ -852,13 +861,13 @@ var manage_event_schedule = function () {
         function recapitulatif () {
 
             var weekday=new Array(7);
-            weekday[0]="Dimanche";
-            weekday[1]="Lundi";
-            weekday[2]="Mardi";
-            weekday[3]="Mercredi";
-            weekday[4]="Jeudi";
-            weekday[5]="Vendredi";
-            weekday[6]="Samedi";
+            weekday[0]="Lundi";
+            weekday[1]="Mardi";
+            weekday[2]="Mercredi";
+            weekday[3]="Jeudi";
+            weekday[4]="Vendredi";
+            weekday[5]="Samedi";
+            weekday[6]="Dimanche";
 
             var pasderepresentation = "",
                 saufles = "",
@@ -1159,4 +1168,30 @@ var manage_myevents = function() {
     }
 
     return {init:_init}
+}();
+
+var verif_form_event = function () {
+    function _init() {
+
+        $("#diarySearchForm").submit(function (event) {
+            event.preventDefault();
+            var verif = false;
+            var verfChekbox = false;
+            $('.colorCheck input').each(function () {
+                if (this.checked) {
+                    verfChekbox = true;
+                }
+            });
+            if ($("#diaryWhere").val() == "" && $("#diaryWhen").val() == "" && verfChekbox == false) {
+                verif = true;
+            }
+            if (verif) {
+                alert("Merci de sélectionner au minimum un paramètre de recherche.");
+            } else {
+                this.submit();
+            }
+        });
+    }
+
+    return {init: _init}
 }();

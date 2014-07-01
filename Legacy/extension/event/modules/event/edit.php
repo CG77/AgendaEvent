@@ -41,7 +41,7 @@ if ( isset( $moduleResult['content'] ) ) {
 
         $nodeRedirect = eZContentObjectTreeNode::fetch( $aUri[4] );
 
-        $Module->redirectTo( $nodeRedirect->attribute( 'url_alias' ) );
+        $Module->redirectTo( '/event/confirmation');
         return;
     }
 }

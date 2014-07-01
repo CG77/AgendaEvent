@@ -23,23 +23,26 @@ function eZGmapLocation_MapControl( attributeId, latLongAttributeBase )
         var my_address   = document.getElementsByClassName( 'ezcca-event_place_address' )[0].value;
         var my_zipcode   = document.getElementsByClassName( 'ezcca-event_place_zipcode' )[0].value;
         var my_city      = document.getElementsByClassName( 'ezcca-event_place_city' )[0].value;
-//        var address = document.getElementById( addressid ).value;
-        var address = my_address +","+ my_zipcode +","+ my_city;
-        if ( geocoder )
-        {
-            geocoder.geocode( {'address' : address}, function( results, status )
+        if (my_address === '' || my_zipcode === '' || my_city === '' ){
+            alert('Veuillez renseigner une adresse pour pouvoir la localiser, merci.');
+        }else{
+            var address = my_address +","+ my_zipcode +","+ my_city;
+            if ( geocoder )
             {
-                if ( status == google.maps.GeocoderStatus.OK )
+                geocoder.geocode( {'address' : address}, function( results, status )
                 {
-                    map.setOptions( { center: results[0].geometry.location, zoom : zoommax } );
-										marker.setPosition(  results[0].geometry.location );
-                    updateLatLngFields( results[0].geometry.location );
-                }
-                else
-                {
-                     alert( address + " not found" );
-                }
-            });
+                    if ( status == google.maps.GeocoderStatus.OK )
+                    {
+                        map.setOptions( { center: results[0].geometry.location, zoom : zoommax } );
+                        marker.setPosition(  results[0].geometry.location );
+                        updateLatLngFields( results[0].geometry.location );
+                    }
+                    else
+                    {
+                        alert( address + " ne peut pas être localisée" );
+                    }
+                });
+            }
         }
     };
     

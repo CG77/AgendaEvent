@@ -23,8 +23,14 @@ $ViewList['delete'] = array(
     'params' => array( 'objectID')
 );
 
+$ViewList['confirmation'] = array(
+    'script' => 'confirmation.php',
+    'functions' => array( 'confirmation' ),
+    'params' => array( 'objectID')
+);
 $FunctionList = array();
 $FunctionList['list'] = array();
 $FunctionList['edit'] = array();
 $FunctionList['delete'] = array();
 $FunctionList['action'] = array();
+$FunctionList['confirmation'] = array();

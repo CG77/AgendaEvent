@@ -2,6 +2,10 @@
 
 namespace ezPublishLegacy\CG77\Core\eZFlow\Event;
 
+use eZ\Publish\API\Repository\Exceptions\NotFoundException;
+use eZ\Publish\API\Repository\Exceptions\UnauthorizedException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 class FetchContent implements \eZFlowFetchInterface {
 
 
@@ -56,13 +60,20 @@ class FetchContent implements \eZFlowFetchInterface {
         if ( $result ) {
             foreach ( $result as $item )
             {
-                $fetchResult[]	=	array(
-                    'object_id' 		=> $item['id'],
-                    'node_id'			=> $item['node_id'][0],
-                    'ts_publication'	=> $item['published'],
-                    'class_identifier'	=> $item['class_identifier'],
-                    'name'				=> $item['name']
-                );
+                try{
+                    $fetchResult[]	=	array(
+                        'object_id' 		=> $item['id'],
+                        'node_id'			=> $item['node_id'][0],
+                        'ts_publication'	=> $item['published'],
+                        'class_identifier'	=> $item['class_identifier'],
+                        'name'				=> $item['name']
+                    );
+                }catch(UnauthorizedException $e){
+
+                }catch(AccessDeniedException $e){
+
+                }catch(NotFoundException $e){}
+
             }
         }
 

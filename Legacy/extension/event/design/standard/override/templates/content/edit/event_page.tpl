@@ -1,13 +1,14 @@
 {def
-    $authorizedAttributeEdit = array('title','tag', 'level', 'event_place','promoter','supported_by', 'not_to_miss_insert', 'main_image','copyright',
+    $authorizedAttributeEdit = array('title','tag', 'event_place','promoter','supported_by', 'main_image','copyright',
                                     'description', 'is_free', 'min_price','max_price', 'prices_informations', 'promoter_email', 'promoter_phone',
                                     'booking_email', 'booking_phone','album', 'introduction','begin_date','end_date','duration','timetable','promoter_website' )
     $attribute = ""
     $error = ""
-    $ImportantNodesID = ezini( 'ImportantNodesID', 'nodes_id', 'cg77.ini' )
     $attribute_categorys        = ezini( 'ClassAttributeSettings', 'CategoryList', 'content.ini' )
     $finals_error = array()
     $parentNodeId = $content_attributes_grouped_data_map.content.parent.contentclass_attribute.content.default_selection_node
+    $event_place_container = $content_attributes_grouped_data_map.content.event_place_container.contentclass_attribute.content.default_selection_node
+    $album_container = $content_attributes_grouped_data_map.content.parent.contentclass_attribute.content.default_selection_node
     $ParentNode = fetch( "content", "node", hash( 'node_id', $parentNodeId ) )
 }
 
@@ -37,8 +38,9 @@
             </article>
             <div class="box formUnit paneFormUnit">
                 <form class="uForm" name="editform" id="editform" enctype="multipart/form-data" method="post" action={concat( '/event/edit/', $object.id, '/', $edit_version, '/', $edit_language|not|choose( concat( $edit_language, '/' ), '/' ), $is_translating_content|not|choose( concat( $from_language, '/' ), '' ) )|ezurl}>
-                    <input type="hidden" value="{$ImportantNodesID.event_place_folder}" id="container_node_id" />
-                    <input type="hidden" value="{$ImportantNodesID.event_album_folder}" id="album_container_node_id" />
+                    <input type="hidden" value="{$event_place_container}" id="container_node_id" />
+
+                    <input type="hidden" value="{$album_container}" id="album_container_node_id" />
                     {foreach $content_attributes_grouped_data_map as $attribute_group => $content_attributes_grouped}
                         {if ne($attribute_group, "content")}
                         <fieldset>

@@ -8,172 +8,188 @@
 {% block content %}
     <section role="main" id="main">
 
-    {% block upperSection %}
-        <section class="upperSection">
-            <div class="wrapper">
-                <div id="carousel-home-n-1" class="carousel slide">
-                    {% set sliders_elements = eznova_relationlist_field_to_content_list( ez_field_value( content, "slider_elements" ) ) %}
-                    {% for i in 0..11 %}
-                        {% if attribute( sliders_elements, i ) is defined %}
-                            {% set element = attribute( sliders_elements, i ) %}
-                            {{ render( controller( "ez_content:viewLocation", { "locationId": element.contentInfo.mainLocationId, "viewType": "line_block"}  ) ) }}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
-    {% endblock %}
-
-    {% block lowerSection %}
-        <section class="lowerSection">
-            <div id="utils">
+        {% block upperSection %}
+            <section class="upperSection">
                 <div class="wrapper">
-                    {{ render(  controller('CGFrontBundle:Layout:breadcrumb',{ 'locationId': location.id } ) ) }}
-                    {% include "CGFrontBundle:Common:social_tools.html.twig" %}
-                </div>
-            </div>
-            <div class="wrapper">
-                <!-- colLarge -->
-                <section class="colLarge">
-                    {% include "CGFrontBundle:Common:tooltip.html.twig" %}
-                    <article class="content">
-                        <header>
-                            <h1>{{ ez_content_name( content ) }}</h1>
-                            <p class="heading">{{ ez_field_value( content, "subtitle" ) }}</p>
-                        </header>
-                    </article>
-                </section>
-                <!-- /colLarge -->
-
-                <!-- colMedium -->
-                <section class="colMedium">
-                    <!-- Bloc Rechercher Evenement -->
-                    <div class="box formUnit diaryFormUnit">
-                        <form id="diarySearchForm" action="" method="get">
-                            <fieldset>
-                                <p>
-                                    <button id="showMyPosition" class="btnGeo" type="button">Ma position</button>
-                                    {% set event_place_container = eznova_relation_field_to_content( ez_field_value( content, 'event_place_container' ) ) %}
-                                    <input type="hidden" value="{{ event_place_container.contentInfo.mainLocationId }}" id="parent_cities">
-                                    <label for="diaryWhere" class="lbTitle">Où&nbsp;?</label>
-                                    {{ form_widget( form.diaryWhere, { "id" : "diaryWhere", "attr" : { "class": "cityAutoComplete" } } ) }}
-                                </p>
-                                <p>
-                                    <label for="diaryWhen" class="lbTitle">Quand&nbsp;?</label>
-                                    {{ form_widget( form.diaryWhen, { "id" : "diaryWhen", "attr" : { "class": "datepicker" } } ) }}
-                                </p>
-                            </fieldset>
-                            <fieldset>
-                                <legend class="lbTitle">Quoi&nbsp;?</legend>
-                                {{ form_widget( form.diaryTopic) }}
-                            </fieldset>
-                            <input type="hidden" value="{{ latitude }}" name="latitude" id="latitude" />
-                            <input type="hidden" value="{{ latitude }}" name="longitude" id="longitude" />
-                            <span><button type="submit" class="btnFind" id="diarySubmit">Trouver</button></span>
-                        </form>
-                    </div>
-                    <!-- /Bloc Rechercher Evenement -->
-
-                    <div class="modal fade" id="myPositionModal" tabindex="-1" role="dialog" aria-labelledby="myPositionLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modalContent">
-                                <div class="modalHeader">
-                                    <p class="modalTitle" id="myPositionLabel"></p>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                </div>
-                                <div class="modalBody">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ajax-loader"></div>
-
-                    <!-- Bloc Carte -->
-                    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-                    <input type="hidden" value="{{ mapsInfo }}" id="mapsInfo" />
-                    <div id="mapWrap" class="box mapUnit">
-                        <div id="map-canvas" class="mapCanvas collapse in"></div>
-                        <button type="button" class="btnCollapse" data-toggle="collapse" data-target="#map-canvas">
-                            <span>Masquer la carte <span>-</span></span>
-                            <span>Afficher la carte <span>+</span></span>
-                        </button>
-                    </div>
-                    <!-- /Bloc Carte -->
-
-                    <!-- Bloc Liste Evenements -->
-                    <h2 class="unseen">Résultats de votre recherche</h2>
-                    <ul class="content resetList diaryList listing">
-                        {% for result in search.SearchResult %}
-                            {{ render( controller( "ez_content:viewLocation", {
-                                    "locationId" : result.location.contentInfo.mainLocationId,
-                                    "viewType": "line_search",
-                                    "params" : { "currentPage" : currentPage, "parentLocationId" : location.id } } ) ) }}
+                    <div id="carousel-home-n-1" class="carousel slide">
+                        {% set sliders_elements = eznova_relationlist_field_to_content_list( ez_field_value( content, "slider_elements" ) ) %}
+                        {% for i in 0..11 %}
+                            {% if attribute( sliders_elements, i ) is defined %}
+                                {% set element = attribute( sliders_elements, i ) %}
+                                {{ render( controller( "ez_content:viewLocation", { "locationId": element.contentInfo.mainLocationId, "viewType": "line_block"}  ) ) }}
+                            {% endif %}
                         {% endfor %}
-                    </ul>
+                    </div>
+                </div>
+            </section>
+        {% endblock %}
 
-                    <div class="modal fade" id="mapLocationModal" tabindex="-1" role="dialog" aria-labelledby="mapLocationLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modalContent">
-                                <div class="modalHeader">
-                                    <p class="modalTitle" id="mapLocationLabel"></p>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                </div>
-                                <div class="modalBody">
-                                    <div class="modalWrapper">
-                                        <!-- Bloc Carte -->
-                                        <div class="mapCanvasPopin" id="mapCanvasPopin"></div>
-                                        <!-- /Bloc Carte -->
+        {% block lowerSection %}
+            <section class="lowerSection">
+                <div id="utils">
+                    <div class="wrapper">
+                        {{ render(  controller('CGFrontBundle:Layout:breadcrumb',{ 'locationId': location.id } ) ) }}
+                        {% include "CGFrontBundle:Common:social_tools.html.twig" %}
+                    </div>
+                </div>
+                <div class="wrapper">
+                    <!-- colLarge -->
+                    <section class="colLarge">
+                        {% include "CGFrontBundle:Common:tooltip.html.twig" %}
+                        <article class="content">
+                            <header>
+                                <h1>{{ ez_content_name( content ) }}</h1>
+
+                                <p class="heading">{{ ez_field_value( content, "subtitle" ) }}</p>
+                            </header>
+                        </article>
+                    </section>
+                    <!-- /colLarge -->
+
+                    <!-- colMedium -->
+                    <section class="colMedium">
+                        <!-- Bloc Rechercher Evenement -->
+                        <div class="box formUnit diaryFormUnit">
+                            <form id="diarySearchForm" action="" method="get">
+                                <fieldset>
+                                    <p>
+                                        <button id="showMyPosition" class="btnGeo" type="button">Ma position</button>
+                                        {% set event_place_container = eznova_relation_field_to_content( ez_field_value( content, 'event_place_container' ) ) %}
+                                        <input type="hidden"
+                                               value="{{ event_place_container.contentInfo.mainLocationId }}"
+                                               id="parent_cities">
+                                        <label for="diaryWhere" class="lbTitle">Où&nbsp;?</label>
+                                        {{ form_widget( form.diaryWhere, { "id" : "diaryWhere", "attr" : { "class": "cityAutoComplete" } } ) }}
+                                    </p>
+                                    <p>
+                                        <label for="diaryWhen" class="lbTitle">Quand&nbsp;?</label>
+                                        {{ form_widget( form.diaryWhen, { "id" : "diaryWhen", "attr" : { "class": "datepicker" } } ) }}
+                                    </p>
+                                </fieldset>
+                                <fieldset>
+                                    <legend class="lbTitle">Quoi&nbsp;?</legend>
+                                    {{ form_widget( form.diaryTopic) }}
+                                </fieldset>
+                                <input type="hidden" value="{{ latitude }}" name="latitude" id="latitude"/>
+                                <input type="hidden" value="{{ latitude }}" name="longitude" id="longitude"/>
+                                <span><button type="submit" class="btnFind" id="diarySubmit">Trouver</button></span>
+                            </form>
+                        </div>
+                        <!-- /Bloc Rechercher Evenement -->
+
+                        <div class="modal fade" id="myPositionModal" tabindex="-1" role="dialog"
+                             aria-labelledby="myPositionLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modalContent">
+                                    <div class="modalHeader">
+                                        <p class="modalTitle" id="myPositionLabel"></p>
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modalBody">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- /Bloc Liste Evenements  -->
+                        <div class="ajax-loader"></div>
 
-                    <input type="hidden" value="{{ nbPage }}" id="nbPage">
-                    {% if nbPage > 1 %}
-                        <!-- Bloc Scroll infini -->
-                        <div class="loadMore">
-                            <ul>
-                                {% for page in 1..nbPage %}
-                                    {% if page != currentPage %}
-                                        <li class={{ page < currentPage ? "prev-posts"  : "next-items" }}>
-                                            <a href="?{{ param_get }}&page={{ page }}" title="page{{ page }}">{{ page }}</a>
-                                        </li>
-                                    {% else %}
-                                        <li>{{ page }}</li>
-                                    {% endif %}
+                        <!-- Bloc Carte -->
+                        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+                        <input type="hidden" value="{{ mapsInfo }}" id="mapsInfo"/>
+
+                        <div id="mapWrap" class="box mapUnit">
+                            <div id="map-canvas" class="mapCanvas collapse in"></div>
+                            <button type="button" class="btnCollapse" data-toggle="collapse" data-target="#map-canvas">
+                                <span>Masquer la carte <span>-</span></span>
+                                <span>Afficher la carte <span>+</span></span>
+                            </button>
+                        </div>
+                        <!-- /Bloc Carte -->
+
+                        <!-- Bloc Liste Evenements -->
+
+                        {% if search.SearchCount == 0 %}
+                            <section class="content resultsList">
+                                <h2> Aucun résultat pour cette recherche.</h2>
+                            </section>
+                        {% else %}
+                            <h2 class="unseen">Résultats de votre recherche</h2>
+                            <ul class="content resetList diaryList listing">
+                                {% for result in search.SearchResult %}
+                                    {{ render( controller( "ez_content:viewLocation", {
+                                    "locationId" : result.location.contentInfo.mainLocationId,
+                                    "viewType": "line_search",
+                                    "params" : { "currentPage" : currentPage, "parentLocationId" : location.id } } ) ) }}
                                 {% endfor %}
                             </ul>
+                        {% endif %}
+                        <div class="modal fade" id="mapLocationModal" tabindex="-1" role="dialog"
+                             aria-labelledby="mapLocationLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modalContent">
+                                    <div class="modalHeader">
+                                        <p class="modalTitle" id="mapLocationLabel"></p>
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modalBody">
+                                        <div class="modalWrapper">
+                                            <!-- Bloc Carte -->
+                                            <div class="mapCanvasPopin" id="mapCanvasPopin"></div>
+                                            <!-- /Bloc Carte -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <!-- /Bloc Scroll infini -->
-                    {% endif %}
-                </section>
-                <!-- /colMedium -->
+                        <!-- /Bloc Liste Evenements  -->
 
-                {% block right_column %}
-                <!-- aside -->
-                <aside role="complementary">
-                    {{ render_esi( controller( "EventAgendaBundle:Agenda:showRightBloc", { "locationId" : location.id, "page" : "homepage" } ) ) }}
-                    {{ ez_render_field( content, 'ez_flow' ) }}
-                    <!-- Bloc A decouvrir -->
-                    <div class="box textUnit rClear">
-                        <h2>&Agrave; découvrir</h2>
-                        <div class="content">
-                            <ul class="resetList imageList">
-                            {% set places_to_see = eznova_relationlist_field_to_content_list( ez_field_value( content, "places_to_see" ) ) %}
-                                {% for place in places_to_see %}
-                                    {{ render( controller( "ez_content:viewLocation", { "locationId": place.contentInfo.mainLocationId, "viewType": "line_block"}  ) ) }}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- /Bloc A decouvrir -->
-                </aside>
-                <!-- /aside -->
-                {% endblock %}
-            </div>
-        </section>
+                        <input type="hidden" value="{{ nbPage }}" id="nbPage">
+                        {% if nbPage > 1 %}
+                            <!-- Bloc Scroll infini -->
+                            <div class="loadMore">
+                                <ul>
+                                    {% for page in 1..nbPage %}
+                                        {% if page != currentPage %}
+                                            <li class={{ page < currentPage ? "prev-posts"  : "next-items" }}>
+                                                <a href="?{{ param_get }}&page={{ page }}"
+                                                   title="page{{ page }}">{{ page }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li>{{ page }}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <!-- /Bloc Scroll infini -->
+                        {% endif %}
+                    </section>
+                    <!-- /colMedium -->
+
+                    {% block right_column %}
+                        <!-- aside -->
+                        <aside role="complementary">
+                            {{ render_esi( controller( "EventAgendaBundle:Agenda:showRightBloc", { "locationId" : location.id, "page" : "homepage" } ) ) }}
+                            {{ ez_render_field( content, 'ez_flow' ) }}
+                            <!-- Bloc A decouvrir -->
+                            <div class="box textUnit rClear">
+                                <h2>&Agrave; découvrir</h2>
+
+                                <div class="content">
+                                    <ul class="resetList imageList">
+                                        {% set places_to_see = eznova_relationlist_field_to_content_list( ez_field_value( content, "places_to_see" ) ) %}
+                                        {% for place in places_to_see %}
+                                            {{ render( controller( "ez_content:viewLocation", { "locationId": place.contentInfo.mainLocationId, "viewType": "line_block"}  ) ) }}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- /Bloc A decouvrir -->
+                        </aside>
+                        <!-- /aside -->
+                    {% endblock %}
+                </div>
+            </section>
         {% endblock %}
     </section>
 {% endblock %}

@@ -1,4 +1,4 @@
-cg77_front:
+event_agenda:
     resource: "@EventAgendaBundle/Controller/"
     type: annotation
     prefix: /

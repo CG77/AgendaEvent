@@ -117,7 +117,7 @@ class AgendaController extends BaseController {
     }
 
     public function getResultSearch( $params ) {
-        $searchService = $this->get( 'eznovaextra.helper.search' );
+        $searchService = $this->get( 'cg_helper.search' );
 
         // Keyword to search
         $query = "*";
@@ -133,8 +133,22 @@ class AgendaController extends BaseController {
         }
 
         if ( isset( $params["diaryWhen"] ) ) {
-            $filter[] = 'attr_begin_date_dt:[NOW TO ' . $params["diaryWhen"] . ']';
-            $filter[] = 'attr_end_date_dt:[' . $params["diaryWhen"] . ' TO *]';
+
+            $dateBegin = new DateTime($params["diaryWhen"]);
+            $filterDate = array();
+
+            $filterDate[] = 'or';
+
+            if($dateBegin->getTimestamp() > time()) {
+                $filterDate[] = 'attr_begin_date_dt:[NOW TO ' . $params["diaryWhen"] . ']';
+            }
+            else {
+                $filterDate[] = 'attr_begin_date_dt:['. $params["diaryWhen"] . ' TO NOW]';
+            }
+
+            $filterDate[] = 'attr_end_date_dt:[' . $params["diaryWhen"] . ' TO *]';
+
+            $filter[] = $filterDate;
         }
 
         if ( isset( $params["diaryWhere"] ) ) {
@@ -154,6 +168,7 @@ class AgendaController extends BaseController {
         $limit = $params["limit"];
 
         $offset = $params["offset"];
+
 
         $contentResults = $searchService->search( $query, $subtree, $filter, $class_id, $sort, $limit, $offset );
 
